@@ -10,7 +10,7 @@ res.sendFile(__dirname +"/html/index.html");
 });
 
 app.get("/sobre",function(req,res){
-    res.send("Sobre minha empresa");
+    res.sendFile(__dirname + "/html/sobre.html")
 })
 
 app.get("/produtos",function(req,res){
