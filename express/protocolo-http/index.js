@@ -4,16 +4,17 @@ const app = express();
 
 const port = 8081;
 
+//rota chamando o html
 app.get("/", function(req,res){
-res.send("Seja bem-vindo");
+res.sendFile(__dirname +"/html/index.html");
 });
 
 app.get("/sobre",function(req,res){
-    res.send("Sobre minha empresa")
+    res.send("Sobre minha empresa");
 })
 
 app.get("/produtos",function(req,res){
-    res.send("Produtos da empresa")
+    res.send("Produtos da empresa");
 })
 //rota com parâmetros
 
