@@ -3,7 +3,11 @@ var express = require('express');
 
 const app = express();
 
+const bodyparser = require('body-parser');
+
 const port = 8081;
+
+const Post = require('./post')
 
 // //rota chamando o html
 // app.get("/", function(req,res){
@@ -30,27 +34,55 @@ const port = 8081;
 const handlebars = require('express-handlebars');
 
 
-const sequelize = require("sequelize"); //requirindo modulo sequelize para conexão e administração do BD
+// const sequelize = require("sequelize"); //requirindo modulo sequelize para conexão e administração do BD
 
-const sequelize2 = new sequelize('testenode', 'root', '', {
-    host: "localhost",
-    dialect: 'mysql'
-});
+// const sequelize2 = new sequelize('testenode', 'root', '', {
+//     host: "localhost",
+//     dialect: 'mysql'
+// });
+
+//criando rota POST
+// app.post('/add', function (req, res) {
+//     res.send('FORMULARIO RECEBIDO');
+// });
+
+//configurando o handlebars e o template engine
+
+app.engine('handlebars', handlebars.engine({ defaultLayout: 'main', runtimeOptions: {allowProtoPropertiesByDefault: true, allowedProtoMethodsByDefault: true } }));
+app.set('view.engine', 'handlebars');
+
+//configurando body-parser
+app.use(bodyparser.urlencoded({extended: false}));//impede a leitura de códigos complexos
+app.use(bodyparser.json()); //interpreta os dados
 
 //criar rota get
 app.get('/cad', function (req, res) {
     res.render('formulario.handlebars');
 });
 
-//criando rota POST
-app.post('/add', function (req, res) {
-    res.send('FORMULARIO RECEBIDO');
-});
+//rota para a home
 
-//configurando o handlebars e o template engine
+app.get('/', function(req,res){
+    Post.findAll({order:[['id', 'desc']]}).then(function(posts){
+        res.render('home.handlebars', {posts: posts})
+})
 
-app.engine('handlebars', handlebars.engine({ defaultLayout: 'main' }));
-app.set('view.engine', 'handlebars');
+})
+
+//uma nova rota post
+app.post('/add', function(req, res){
+    Post.create({
+        titulo: req.body.titulo,
+        conteudo: req.body.conteudo
+    })
+    .then(function(){
+        res.redirect('/')
+        })
+        .catch(function(erro){
+            res.send("Houve um erro: " + erro)
+        })
+})
+
 
 //porta do protocolo http
 app.listen(port, function () {
